@@ -1,0 +1,22 @@
+POST http://localhost:8080/api/validate_chirp HTTP/1.1
+Content-Type: application/json
+
+{
+    "body": "This is an opinion I need to share with the world"
+}
+
+### Valid chirp
+POST http://localhost:8080/api/validate_chirp HTTP/1.1
+Content-Type: application/json
+
+{
+    "body": "This is short"
+}
+
+### Chirp too long
+POST http://localhost:8080/api/validate_chirp HTTP/1.1
+Content-Type: application/json
+
+{
+    "body": "This is a very very very very very very very very very very very very very very very very very very very very very long chirp that exceeds the character limit"
+}

@@ -7,21 +7,9 @@ import (
 )
 
 type apiConfig struct {
-fileserverHits atomic.Int32
+	fileserverHits atomic.Int32
 }
 
-func (cfg *apiConfig) middlewareMetricsInc(next http.Handler) http.Handler{
-	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request)  {
-		cfg.fileserverHits.Add(1)
-		next.ServeHTTP(w, r)
-	})
-}
-
-func (cfg *apiConfig) handlerMetrics(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Content-Type", "text/plain; charset=utf-8")
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(fmt.Sprintf("Hits: %d", cfg.fileserverHits.Load())))
-}
 
 func main() {
 
@@ -34,9 +22,9 @@ func main() {
 	ServeMux.Handle("assets/", fileServer)
 	ServeMux.Handle("/app/", fsHandler)
 	ServeMux.HandleFunc("GET /api/healthz", handlerReadiness)
-	ServeMux.HandleFunc("GET /api/metrics", apiCfg.handlerMetrics)
-	ServeMux.HandleFunc("POST /api/reset", apiCfg.handlerReset)
-
+	ServeMux.HandleFunc("GET /admin/metrics", apiCfg.handlerMetrics)
+	ServeMux.HandleFunc("POST /admin/reset", apiCfg.handlerReset)
+	ServeMux.HandleFunc("POST /api/validate_chirp", handlerChripsValidate)
 
 	server := &http.Server{
 		Handler: ServeMux,
